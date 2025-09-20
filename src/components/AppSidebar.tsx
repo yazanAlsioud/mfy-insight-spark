@@ -54,9 +54,9 @@ export function AppSidebar() {
     >
       <SidebarContent className="bg-card border-r border-border">
         {/* Header */}
-        <div className="p-6 border-b border-border">
+        <div className={`border-b border-border ${collapsed ? "p-3" : "p-6"}`}>
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center flex-shrink-0">
               <BarChart3 className="w-5 h-5 text-white" />
             </div>
             {!collapsed && (
@@ -69,9 +69,9 @@ export function AppSidebar() {
         </div>
 
         {/* Main Navigation */}
-        <SidebarGroup className="px-4 py-4">
+        <SidebarGroup className={`py-4 ${collapsed ? "px-2" : "px-4"}`}>
           {!collapsed && (
-            <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+            <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-2">
               Main
             </SidebarGroupLabel>
           )}
@@ -79,9 +79,9 @@ export function AppSidebar() {
             <SidebarMenu className="space-y-1">
               {mainItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild className="h-11">
+                  <SidebarMenuButton asChild className={`h-11 ${collapsed ? "justify-center px-2" : "justify-start px-3"}`}>
                     <NavLink to={item.url} end className={getNavClasses}>
-                      <item.icon className="w-5 h-5 mr-3" />
+                      <item.icon className={`w-5 h-5 flex-shrink-0 ${collapsed ? "" : "mr-3"}`} />
                       {!collapsed && <span className="font-medium">{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
@@ -92,13 +92,13 @@ export function AppSidebar() {
         </SidebarGroup>
 
         {/* Bottom Section */}
-        <div className="mt-auto p-4 border-t border-border">
+        <div className={`mt-auto border-t border-border ${collapsed ? "p-2" : "p-4"}`}>
           <SidebarMenu className="space-y-1">
             {bottomItems.map((item) => (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild className="h-11">
+                <SidebarMenuButton asChild className={`h-11 ${collapsed ? "justify-center px-2" : "justify-start px-3"}`}>
                   <NavLink to={item.url} className={getNavClasses}>
-                    <item.icon className="w-5 h-5 mr-3" />
+                    <item.icon className={`w-5 h-5 flex-shrink-0 ${collapsed ? "" : "mr-3"}`} />
                     {!collapsed && <span className="font-medium">{item.title}</span>}
                   </NavLink>
                 </SidebarMenuButton>
@@ -108,9 +108,9 @@ export function AppSidebar() {
             <SidebarMenuItem>
               <Button 
                 variant="ghost" 
-                className="w-full justify-start h-11 text-muted-foreground hover:text-foreground"
+                className={`w-full h-11 text-muted-foreground hover:text-foreground ${collapsed ? "justify-center px-2" : "justify-start px-3"}`}
               >
-                <LogOut className="w-5 h-5 mr-3" />
+                <LogOut className={`w-5 h-5 flex-shrink-0 ${collapsed ? "" : "mr-3"}`} />
                 {!collapsed && <span className="font-medium">Logout</span>}
               </Button>
             </SidebarMenuItem>
