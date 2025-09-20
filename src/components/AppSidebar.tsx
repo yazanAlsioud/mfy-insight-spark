@@ -42,10 +42,6 @@ export function AppSidebar() {
   const collapsed = state === "collapsed";
 
   const isActive = (path: string) => currentPath === path;
-  const getNavClasses = ({ isActive }: { isActive: boolean }) =>
-    isActive 
-      ? "bg-primary text-primary-foreground font-medium shadow-sm" 
-      : "hover:bg-accent text-muted-foreground hover:text-foreground transition-colors";
 
   return (
     <Sidebar
@@ -77,16 +73,27 @@ export function AppSidebar() {
           )}
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
-              {mainItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild className={`h-11 ${collapsed ? "justify-center px-2" : "justify-start px-3"}`}>
-                    <NavLink to={item.url} end className={getNavClasses}>
-                      <item.icon className={`w-5 h-5 flex-shrink-0 ${collapsed ? "" : "mr-3"}`} />
-                      {!collapsed && <span className="font-medium">{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {mainItems.map((item) => {
+                const active = isActive(item.url);
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild className={`h-11 ${collapsed ? "justify-center px-2" : "justify-start px-3"}`}>
+                      <NavLink 
+                        to={item.url} 
+                        end 
+                        className={`flex items-center w-full h-full rounded-md transition-colors ${
+                          active 
+                            ? "bg-primary text-primary-foreground font-medium shadow-sm" 
+                            : "text-foreground hover:bg-accent hover:text-foreground"
+                        }`}
+                      >
+                        <item.icon className={`w-5 h-5 flex-shrink-0 ${collapsed ? "" : "mr-3"}`} />
+                        {!collapsed && <span className="font-medium">{item.title}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -94,21 +101,31 @@ export function AppSidebar() {
         {/* Bottom Section */}
         <div className={`mt-auto border-t border-border ${collapsed ? "p-2" : "p-4"}`}>
           <SidebarMenu className="space-y-1">
-            {bottomItems.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild className={`h-11 ${collapsed ? "justify-center px-2" : "justify-start px-3"}`}>
-                  <NavLink to={item.url} className={getNavClasses}>
-                    <item.icon className={`w-5 h-5 flex-shrink-0 ${collapsed ? "" : "mr-3"}`} />
-                    {!collapsed && <span className="font-medium">{item.title}</span>}
-                  </NavLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
+            {bottomItems.map((item) => {
+              const active = isActive(item.url);
+              return (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild className={`h-11 ${collapsed ? "justify-center px-2" : "justify-start px-3"}`}>
+                    <NavLink 
+                      to={item.url} 
+                      className={`flex items-center w-full h-full rounded-md transition-colors ${
+                        active 
+                          ? "bg-primary text-primary-foreground font-medium shadow-sm" 
+                          : "text-foreground hover:bg-accent hover:text-foreground"
+                      }`}
+                    >
+                      <item.icon className={`w-5 h-5 flex-shrink-0 ${collapsed ? "" : "mr-3"}`} />
+                      {!collapsed && <span className="font-medium">{item.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              );
+            })}
             
             <SidebarMenuItem>
               <Button 
                 variant="ghost" 
-                className={`w-full h-11 text-muted-foreground hover:text-foreground ${collapsed ? "justify-center px-2" : "justify-start px-3"}`}
+                className={`w-full h-11 text-foreground hover:bg-accent hover:text-foreground ${collapsed ? "justify-center px-2" : "justify-start px-3"}`}
               >
                 <LogOut className={`w-5 h-5 flex-shrink-0 ${collapsed ? "" : "mr-3"}`} />
                 {!collapsed && <span className="font-medium">Logout</span>}
