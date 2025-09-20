@@ -1,0 +1,122 @@
+import { useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
+import {
+  BarChart3,
+  MessageSquare,
+  TrendingUp,
+  Upload,
+  LayoutDashboard,
+  Settings,
+  LogOut,
+} from "lucide-react";
+
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarTrigger,
+  useSidebar,
+} from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+
+const mainItems = [
+  { title: "Dashboard", url: "/", icon: LayoutDashboard },
+  { title: "Chatbot", url: "/chatbot", icon: MessageSquare },
+  { title: "Benchmark", url: "/benchmark", icon: TrendingUp },
+  { title: "Data Entry", url: "/data-entry", icon: Upload },
+];
+
+const bottomItems = [
+  { title: "Settings", url: "/settings", icon: Settings },
+];
+
+export function AppSidebar() {
+  const { state } = useSidebar();
+  const location = useLocation();
+  const currentPath = location.pathname;
+  const collapsed = state === "collapsed";
+
+  const isActive = (path: string) => currentPath === path;
+  const getNavClasses = ({ isActive }: { isActive: boolean }) =>
+    isActive 
+      ? "bg-primary text-primary-foreground font-medium shadow-sm" 
+      : "hover:bg-accent text-muted-foreground hover:text-foreground transition-colors";
+
+  return (
+    <Sidebar
+      className={collapsed ? "w-16" : "w-64"}
+      collapsible="icon"
+    >
+      <SidebarContent className="bg-card border-r border-border">
+        {/* Header */}
+        <div className="p-6 border-b border-border">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
+              <BarChart3 className="w-5 h-5 text-white" />
+            </div>
+            {!collapsed && (
+              <div>
+                <h1 className="text-xl font-bold text-foreground">MFY</h1>
+                <p className="text-xs text-muted-foreground">Fintech Platform</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Main Navigation */}
+        <SidebarGroup className="px-4 py-4">
+          {!collapsed && (
+            <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+              Main
+            </SidebarGroupLabel>
+          )}
+          <SidebarGroupContent>
+            <SidebarMenu className="space-y-1">
+              {mainItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild className="h-11">
+                    <NavLink to={item.url} end className={getNavClasses}>
+                      <item.icon className="w-5 h-5 mr-3" />
+                      {!collapsed && <span className="font-medium">{item.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Bottom Section */}
+        <div className="mt-auto p-4 border-t border-border">
+          <SidebarMenu className="space-y-1">
+            {bottomItems.map((item) => (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton asChild className="h-11">
+                  <NavLink to={item.url} className={getNavClasses}>
+                    <item.icon className="w-5 h-5 mr-3" />
+                    {!collapsed && <span className="font-medium">{item.title}</span>}
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+            
+            <SidebarMenuItem>
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start h-11 text-muted-foreground hover:text-foreground"
+              >
+                <LogOut className="w-5 h-5 mr-3" />
+                {!collapsed && <span className="font-medium">Logout</span>}
+              </Button>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </div>
+      </SidebarContent>
+    </Sidebar>
+  );
+}
