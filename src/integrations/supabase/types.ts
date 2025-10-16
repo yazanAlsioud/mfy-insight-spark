@@ -835,6 +835,50 @@ export type Database = {
           },
         ]
       }
+      kpis: {
+        Row: {
+          client_company_id: number
+          created_at: string | null
+          current_value: number | null
+          description: string | null
+          kpi_id: number
+          metric_name: string
+          target_date: string | null
+          target_value: number
+          updated_at: string | null
+        }
+        Insert: {
+          client_company_id: number
+          created_at?: string | null
+          current_value?: number | null
+          description?: string | null
+          kpi_id?: number
+          metric_name: string
+          target_date?: string | null
+          target_value: number
+          updated_at?: string | null
+        }
+        Update: {
+          client_company_id?: number
+          created_at?: string | null
+          current_value?: number | null
+          description?: string | null
+          kpi_id?: number
+          metric_name?: string
+          target_date?: string | null
+          target_value?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_kpis_client_company_id"
+            columns: ["client_company_id"]
+            isOneToOne: false
+            referencedRelation: "clientcompanies"
+            referencedColumns: ["client_company_id"]
+          },
+        ]
+      }
       performancebenchmarks: {
         Row: {
           benchmark_id: number

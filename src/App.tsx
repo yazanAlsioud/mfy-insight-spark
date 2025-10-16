@@ -11,6 +11,7 @@ import Chatbot from "./pages/Chatbot";
 import Benchmark from "./pages/Benchmark";
 import DataEntry from "./pages/DataEntry";
 import Settings from "./pages/Settings";
+import KPIs from "./pages/KPIs";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -37,6 +38,7 @@ const App = () => (
                         <Route path="/chatbot" element={<Chatbot />} />
                         <Route path="/benchmark" element={<Benchmark />} />
                         <Route path="/data-entry" element={<DataEntry />} />
+                        <Route path="/kpis" element={<KPIs />} />
                         <Route path="/settings" element={<Settings />} />
                         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                         <Route path="*" element={<NotFound />} />

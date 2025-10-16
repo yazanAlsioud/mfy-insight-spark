@@ -7,6 +7,7 @@ import {
   Upload,
   LayoutDashboard,
   Settings,
+  Target,
 } from "lucide-react";
 
 import {
@@ -28,6 +29,7 @@ const mainItems = [
   { title: "Chatbot", url: "/chatbot", icon: MessageSquare },
   { title: "Benchmark", url: "/benchmark", icon: TrendingUp },
   { title: "Data Entry", url: "/data-entry", icon: Upload },
+  { title: "KPIs", url: "/kpis", icon: Target },
 ];
 
 const bottomItems = [

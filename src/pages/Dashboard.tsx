@@ -12,16 +12,12 @@ import { MetricCard } from "@/components/MetricCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useFinancialData } from "@/hooks/useFinancialData";
+import { useKPIs } from "@/hooks/useKPIs";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const Dashboard = () => {
   const { metrics, loading } = useFinancialData();
-
-  const upcomingGoals = [
-    { goal: "Increase revenue by 15%", progress: 78, target: "Q4 2024" },
-    { goal: "Reduce operating costs by 8%", progress: 45, target: "Q1 2025" },
-    { goal: "Improve profit margin to 25%", progress: 62, target: "Q4 2024" },
-  ];
+  const { kpis, loading: kpisLoading } = useKPIs();
 
   const formatCurrency = (value: number) => {
     if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
@@ -101,33 +97,69 @@ const Dashboard = () => {
         )}
       </div>
 
-      {/* Performance vs Goals */}
+      {/* Performance vs KPIs */}
       <Card className="shadow-card">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Activity className="w-5 h-5" />
-            Performance vs Goals
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="w-5 h-5" />
+              Key Performance Indicators
+            </CardTitle>
+            <Link to="/kpis">
+              <Button variant="outline" size="sm">
+                Manage KPIs
+              </Button>
+            </Link>
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          {upcomingGoals.map((goal, index) => (
-            <div key={index} className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-medium">{goal.goal}</span>
-                <span className="text-muted-foreground">{goal.target}</span>
-              </div>
-              <div className="w-full bg-muted rounded-full h-2">
-                <div 
-                  className="bg-gradient-primary h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${goal.progress}%` }}
-                ></div>
-              </div>
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>{goal.progress}% complete</span>
-                <span>{100 - goal.progress}% remaining</span>
-              </div>
+          {kpisLoading ? (
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="space-y-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-2 w-full" />
+                </div>
+              ))}
             </div>
-          ))}
+          ) : kpis.length === 0 ? (
+            <div className="text-center py-6 text-muted-foreground">
+              <p>No KPIs set yet.</p>
+              <Link to="/kpis">
+                <Button variant="link" className="mt-2">
+                  Set up your first KPI →
+                </Button>
+              </Link>
+            </div>
+          ) : (
+            kpis.map((kpi, index) => {
+              // Calculate progress (simplified - you can enhance this)
+              const progress = kpi.current_value 
+                ? Math.min(100, (kpi.current_value / kpi.target_value) * 100)
+                : 0;
+              
+              return (
+                <div key={index} className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium">{kpi.description || kpi.metric_name}</span>
+                    <span className="text-muted-foreground">
+                      Target: {new Date(kpi.target_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                    </span>
+                  </div>
+                  <div className="w-full bg-muted rounded-full h-2">
+                    <div 
+                      className="bg-gradient-primary h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${progress}%` }}
+                    ></div>
+                  </div>
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>{progress.toFixed(0)}% complete</span>
+                    <span>Target: {kpi.target_value}%</span>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </CardContent>
       </Card>
 
