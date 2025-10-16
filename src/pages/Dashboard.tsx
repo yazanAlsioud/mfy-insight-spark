@@ -133,9 +133,9 @@ const Dashboard = () => {
             </div>
           ) : (
             kpis.map((kpi, index) => {
-              // Calculate progress (simplified - you can enhance this)
-              const progress = kpi.current_value 
-                ? Math.min(100, (kpi.current_value / kpi.target_value) * 100)
+              // Calculate progress based on actual current value vs target
+              const progress = kpi.current_value && kpi.target_value
+                ? Math.min(100, Math.max(0, (kpi.current_value / kpi.target_value) * 100))
                 : 0;
               
               return (
@@ -153,8 +153,15 @@ const Dashboard = () => {
                     ></div>
                   </div>
                   <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>{progress.toFixed(0)}% complete</span>
-                    <span>Target: {kpi.target_value}%</span>
+                    <span>
+                      Current: {kpi.current_value.toFixed(1)}
+                      {kpi.metric_name.includes('ratio') ? '' : '%'} 
+                      ({progress.toFixed(0)}% of target)
+                    </span>
+                    <span>
+                      Target: {kpi.target_value}
+                      {kpi.metric_name.includes('ratio') ? '' : '%'}
+                    </span>
                   </div>
                 </div>
               );
