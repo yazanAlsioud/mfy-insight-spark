@@ -424,6 +424,13 @@ export type Database = {
             referencedRelation: "clientcompanies"
             referencedColumns: ["client_company_id"]
           },
+          {
+            foreignKeyName: "fk_clientbalancesheets_client_company_id"
+            columns: ["client_company_id"]
+            isOneToOne: false
+            referencedRelation: "clientcompanies"
+            referencedColumns: ["client_company_id"]
+          },
         ]
       }
       clientcompanies: {
@@ -462,6 +469,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "sectors"
             referencedColumns: ["sector_id"]
+          },
+          {
+            foreignKeyName: "fk_clientcompanies_client_id"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["client_id"]
           },
         ]
       }
@@ -622,6 +636,13 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "clientincomestatements_client_company_id_fkey"
+            columns: ["client_company_id"]
+            isOneToOne: false
+            referencedRelation: "clientcompanies"
+            referencedColumns: ["client_company_id"]
+          },
+          {
+            foreignKeyName: "fk_clientincomestatements_client_company_id"
             columns: ["client_company_id"]
             isOneToOne: false
             referencedRelation: "clientcompanies"
@@ -874,7 +895,15 @@ export type Database = {
           id?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_profiles_client_id"
+            columns: ["client_id"]
+            isOneToOne: true
+            referencedRelation: "clients"
+            referencedColumns: ["client_id"]
+          },
+        ]
       }
       saudimarketcompanies: {
         Row: {
