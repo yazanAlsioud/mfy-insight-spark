@@ -7,6 +7,7 @@ import {
   Users,
   ArrowRight
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { MetricCard } from "@/components/MetricCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -104,32 +105,38 @@ const Dashboard = () => {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <Button variant="outline" className="h-auto p-4 flex flex-col items-start space-y-2">
-              <TrendingUp className="w-6 h-6 text-primary" />
-              <div className="text-left">
-                <div className="font-medium">View Benchmark</div>
-                <div className="text-xs text-muted-foreground">Compare with industry</div>
-              </div>
-              <ArrowRight className="w-4 h-4 ml-auto text-muted-foreground" />
-            </Button>
+            <Link to="/benchmark">
+              <Button variant="outline" className="h-auto p-4 flex flex-col items-start space-y-2 w-full">
+                <TrendingUp className="w-6 h-6 text-primary" />
+                <div className="text-left">
+                  <div className="font-medium">View Benchmark</div>
+                  <div className="text-xs text-muted-foreground">Compare with industry</div>
+                </div>
+                <ArrowRight className="w-4 h-4 ml-auto text-muted-foreground" />
+              </Button>
+            </Link>
             
-            <Button variant="outline" className="h-auto p-4 flex flex-col items-start space-y-2">
-              <Activity className="w-6 h-6 text-success" />
-              <div className="text-left">
-                <div className="font-medium">Upload Data</div>
-                <div className="text-xs text-muted-foreground">Add financial statements</div>
-              </div>
-              <ArrowRight className="w-4 h-4 ml-auto text-muted-foreground" />
-            </Button>
+            <Link to="/data-entry">
+              <Button variant="outline" className="h-auto p-4 flex flex-col items-start space-y-2 w-full">
+                <Activity className="w-6 h-6 text-success" />
+                <div className="text-left">
+                  <div className="font-medium">Upload Data</div>
+                  <div className="text-xs text-muted-foreground">Add financial statements</div>
+                </div>
+                <ArrowRight className="w-4 h-4 ml-auto text-muted-foreground" />
+              </Button>
+            </Link>
             
-            <Button variant="outline" className="h-auto p-4 flex flex-col items-start space-y-2">
-              <Users className="w-6 h-6 text-warning" />
-              <div className="text-left">
-                <div className="font-medium">Ask AI Assistant</div>
-                <div className="text-xs text-muted-foreground">Get insights & advice</div>
-              </div>
-              <ArrowRight className="w-4 h-4 ml-auto text-muted-foreground" />
-            </Button>
+            <Link to="/chatbot">
+              <Button variant="outline" className="h-auto p-4 flex flex-col items-start space-y-2 w-full">
+                <Users className="w-6 h-6 text-warning" />
+                <div className="text-left">
+                  <div className="font-medium">Ask AI Assistant</div>
+                  <div className="text-xs text-muted-foreground">Get insights & advice</div>
+                </div>
+                <ArrowRight className="w-4 h-4 ml-auto text-muted-foreground" />
+              </Button>
+            </Link>
           </div>
         </CardContent>
       </Card>
