@@ -12,7 +12,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface Company {
   client_company_id: number;
   company_name: string;
-  industry: string;
   sector_id: number;
 }
 
@@ -30,7 +29,6 @@ const CompanySetup = () => {
   const [clientId, setClientId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     company_name: "",
-    industry: "",
     sector_id: "",
   });
   const { toast } = useToast();
@@ -88,7 +86,6 @@ const CompanySetup = () => {
         setCompany(companyData);
         setFormData({
           company_name: companyData.company_name || "",
-          industry: companyData.industry || "",
           sector_id: companyData.sector_id?.toString() || "",
         });
       }
@@ -114,7 +111,7 @@ const CompanySetup = () => {
       return;
     }
 
-    if (!formData.company_name || !formData.industry || !formData.sector_id) {
+    if (!formData.company_name || !formData.sector_id) {
       toast({
         title: "Missing fields",
         description: "Please fill in all required fields",
@@ -129,7 +126,6 @@ const CompanySetup = () => {
       const companyPayload = {
         client_id: clientId,
         company_name: formData.company_name.trim(),
-        industry: formData.industry.trim(),
         sector_id: parseInt(formData.sector_id),
       };
 
@@ -204,10 +200,6 @@ const CompanySetup = () => {
                 <Skeleton className="h-4 w-32" />
                 <Skeleton className="h-10 w-full" />
               </div>
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-32" />
-                <Skeleton className="h-10 w-full" />
-              </div>
             </div>
           ) : (
             <div className="space-y-6">
@@ -219,18 +211,6 @@ const CompanySetup = () => {
                   value={formData.company_name}
                   onChange={(e) =>
                     setFormData({ ...formData, company_name: e.target.value })
-                  }
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="industry">Industry *</Label>
-                <Input
-                  id="industry"
-                  placeholder="e.g., Technology, Healthcare, Finance"
-                  value={formData.industry}
-                  onChange={(e) =>
-                    setFormData({ ...formData, industry: e.target.value })
                   }
                 />
               </div>
