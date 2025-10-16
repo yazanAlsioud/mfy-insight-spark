@@ -11,36 +11,8 @@ import {
 import { MetricCard } from "@/components/MetricCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 
 const Dashboard = () => {
-  const recentActivities = [
-    { 
-      action: "Financial data uploaded", 
-      file: "Q3_2024_financials.csv", 
-      time: "2 hours ago",
-      status: "completed" 
-    },
-    { 
-      action: "Benchmark analysis generated", 
-      file: "Industry comparison - SaaS", 
-      time: "1 day ago",
-      status: "completed" 
-    },
-    { 
-      action: "AI insights generated", 
-      file: "Cost optimization recommendations", 
-      time: "2 days ago",
-      status: "new" 
-    },
-    { 
-      action: "Monthly report created", 
-      file: "September 2024 Summary", 
-      time: "3 days ago",
-      status: "completed" 
-    },
-  ];
-
   const upcomingGoals = [
     { goal: "Increase revenue by 15%", progress: 78, target: "Q4 2024" },
     { goal: "Reduce operating costs by 8%", progress: 45, target: "Q1 2025" },
@@ -99,67 +71,35 @@ const Dashboard = () => {
         />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Performance vs Goals */}
-        <Card className="lg:col-span-2 shadow-card">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Activity className="w-5 h-5" />
-              Performance vs Goals
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {upcomingGoals.map((goal, index) => (
-              <div key={index} className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="font-medium">{goal.goal}</span>
-                  <span className="text-muted-foreground">{goal.target}</span>
-                </div>
-                <div className="w-full bg-muted rounded-full h-2">
-                  <div 
-                    className="bg-gradient-primary h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${goal.progress}%` }}
-                  ></div>
-                </div>
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>{goal.progress}% complete</span>
-                  <span>{100 - goal.progress}% remaining</span>
-                </div>
+      {/* Performance vs Goals */}
+      <Card className="shadow-card">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Activity className="w-5 h-5" />
+            Performance vs Goals
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {upcomingGoals.map((goal, index) => (
+            <div key={index} className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-medium">{goal.goal}</span>
+                <span className="text-muted-foreground">{goal.target}</span>
               </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        {/* Recent Activity */}
-        <Card className="shadow-card">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="w-5 h-5" />
-              Recent Activity
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {recentActivities.map((activity, index) => (
-              <div key={index} className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                <div className="space-y-1 flex-1">
-                  <p className="text-sm font-medium">{activity.action}</p>
-                  <p className="text-xs text-muted-foreground">{activity.file}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">{activity.time}</span>
-                    <Badge 
-                      variant={activity.status === "new" ? "default" : "secondary"}
-                      className="text-xs"
-                    >
-                      {activity.status}
-                    </Badge>
-                  </div>
-                </div>
+              <div className="w-full bg-muted rounded-full h-2">
+                <div 
+                  className="bg-gradient-primary h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${goal.progress}%` }}
+                ></div>
               </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>{goal.progress}% complete</span>
+                <span>{100 - goal.progress}% remaining</span>
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
 
       {/* Quick Actions */}
       <Card className="shadow-card">
