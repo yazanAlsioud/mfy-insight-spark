@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   Settings,
   Target,
+  Building2,
 } from "lucide-react";
 
 import {
@@ -30,6 +31,7 @@ const mainItems = [
   { title: "Benchmark", url: "/benchmark", icon: TrendingUp },
   { title: "Data Entry", url: "/data-entry", icon: Upload },
   { title: "KPIs", url: "/kpis", icon: Target },
+  { title: "Company Setup", url: "/company-setup", icon: Building2 },
 ];
 
 const bottomItems = [
