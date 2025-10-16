@@ -671,6 +671,50 @@ export type Database = {
         }
         Relationships: []
       }
+      file_uploads: {
+        Row: {
+          client_company_id: number
+          error_message: string | null
+          file_size: number | null
+          file_type: string
+          filename: string
+          records_count: number | null
+          status: string | null
+          upload_date: string | null
+          upload_id: number
+        }
+        Insert: {
+          client_company_id: number
+          error_message?: string | null
+          file_size?: number | null
+          file_type: string
+          filename: string
+          records_count?: number | null
+          status?: string | null
+          upload_date?: string | null
+          upload_id?: number
+        }
+        Update: {
+          client_company_id?: number
+          error_message?: string | null
+          file_size?: number | null
+          file_type?: string
+          filename?: string
+          records_count?: number | null
+          status?: string | null
+          upload_date?: string | null
+          upload_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_file_uploads_client_company_id"
+            columns: ["client_company_id"]
+            isOneToOne: false
+            referencedRelation: "clientcompanies"
+            referencedColumns: ["client_company_id"]
+          },
+        ]
+      }
       incomestatements: {
         Row: {
           amortization_of_intangibles_income_statement: number | null
