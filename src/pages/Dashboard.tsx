@@ -5,7 +5,6 @@ import {
   PieChart,
   Activity,
   Users,
-  Calendar,
   ArrowRight
 } from "lucide-react";
 import { MetricCard } from "@/components/MetricCard";
@@ -22,17 +21,11 @@ const Dashboard = () => {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
-          <p className="text-muted-foreground mt-1">
-            Welcome back! Here's your financial overview for September 2024.
-          </p>
-        </div>
-        <Button className="bg-gradient-primary hover:opacity-90 transition-opacity">
-          <Calendar className="w-4 h-4 mr-2" />
-          View Full Report
-        </Button>
+      <div>
+        <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+        <p className="text-muted-foreground mt-1">
+          Welcome back! Here's your financial overview for September 2024.
+        </p>
       </div>
 
       {/* Key Metrics Grid */}
@@ -110,7 +103,7 @@ const Dashboard = () => {
           </p>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <Button variant="outline" className="h-auto p-4 flex flex-col items-start space-y-2">
               <TrendingUp className="w-6 h-6 text-primary" />
               <div className="text-left">
@@ -134,15 +127,6 @@ const Dashboard = () => {
               <div className="text-left">
                 <div className="font-medium">Ask AI Assistant</div>
                 <div className="text-xs text-muted-foreground">Get insights & advice</div>
-              </div>
-              <ArrowRight className="w-4 h-4 ml-auto text-muted-foreground" />
-            </Button>
-            
-            <Button variant="outline" className="h-auto p-4 flex flex-col items-start space-y-2">
-              <PieChart className="w-6 h-6 text-chart-revenue" />
-              <div className="text-left">
-                <div className="font-medium">Generate Report</div>
-                <div className="text-xs text-muted-foreground">Create monthly summary</div>
               </div>
               <ArrowRight className="w-4 h-4 ml-auto text-muted-foreground" />
             </Button>
