@@ -153,7 +153,10 @@ const DataEntry = () => {
   };
 
   const handleUpload = async () => {
+    console.log("Upload started. CompanyId:", companyId, "SelectedFile:", selectedFile?.name);
+    
     if (!selectedFile || !companyId) {
+      console.error("Missing required data - CompanyId:", companyId, "SelectedFile:", selectedFile);
       toast({
         title: "Error",
         description: "Please select a file and ensure your company is set up",
@@ -167,13 +170,17 @@ const DataEntry = () => {
 
       // Read file
       const text = await selectedFile.text();
+      console.log("File read successfully. Text length:", text.length);
+      
       const parsedData = parseCSV(text);
+      console.log("Parsed data:", parsedData.length, "rows", parsedData);
 
       if (parsedData.length === 0) {
         throw new Error("No data found in CSV file");
       }
 
       // Create upload record
+      console.log("Creating upload record for company:", companyId);
       const { data: uploadRecord, error: uploadError } = await supabase
         .from("file_uploads")
         .insert({
@@ -186,57 +193,75 @@ const DataEntry = () => {
         .select()
         .single();
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error("Upload record creation error:", uploadError);
+        throw uploadError;
+      }
+      console.log("Upload record created:", uploadRecord);
 
       // Determine if it's income statement or balance sheet based on headers
       const firstRow = parsedData[0];
       const headers = Object.keys(firstRow);
+      console.log("Detected headers:", headers);
       
       let recordsInserted = 0;
       let insertError = null;
 
       // Check if it looks like income statement data
       if (headers.some(h => h.includes('revenue') || h.includes('income') || h.includes('expense'))) {
+        console.log("Detected as income statement data");
+        const dataToInsert = parsedData.map(row => ({
+          client_company_id: companyId,
+          year: row.year || new Date().getFullYear(),
+          quarter: row.quarter || 'Q1',
+          total_revenue: row.total_revenue || row.revenue,
+          cost_of_revenue: row.cost_of_revenue,
+          gross_profit: row.gross_profit,
+          operating_expense: row.operating_expense,
+          operating_income: row.operating_income,
+          net_income_common_stockholders: row.net_income || row.net_income_common_stockholders,
+          basic_eps: row.basic_eps,
+          diluted_eps: row.diluted_eps,
+        }));
+        console.log("Income statement data to insert:", dataToInsert);
+        
         const { error } = await supabase
           .from("clientincomestatements")
-          .insert(
-            parsedData.map(row => ({
-              client_company_id: companyId,
-              year: row.year || new Date().getFullYear(),
-              quarter: row.quarter || 'Q1',
-              total_revenue: row.total_revenue || row.revenue,
-              cost_of_revenue: row.cost_of_revenue,
-              gross_profit: row.gross_profit,
-              operating_expense: row.operating_expense,
-              operating_income: row.operating_income,
-              net_income_common_stockholders: row.net_income || row.net_income_common_stockholders,
-              basic_eps: row.basic_eps,
-              diluted_eps: row.diluted_eps,
-            }))
-          );
+          .insert(dataToInsert);
+        
+        if (error) {
+          console.error("Income statement insert error:", error);
+        }
         insertError = error;
         recordsInserted = parsedData.length;
       } 
       // Check if it looks like balance sheet data
       else if (headers.some(h => h.includes('asset') || h.includes('liability') || h.includes('equity'))) {
+        console.log("Detected as balance sheet data");
+        const dataToInsert = parsedData.map(row => ({
+          client_company_id: companyId,
+          year: row.year || new Date().getFullYear(),
+          quarter: row.quarter || 'Q1',
+          total_assets: row.total_assets,
+          current_assets: row.current_assets,
+          cash_and_cash_equivalents: row.cash_and_cash_equivalents,
+          total_liabilities_net_minority_interest: row.total_liabilities || row.total_liabilities_net_minority_interest,
+          current_liabilities: row.current_liabilities,
+          stockholders_equity: row.stockholders_equity,
+        }));
+        console.log("Balance sheet data to insert:", dataToInsert);
+        
         const { error } = await supabase
           .from("clientbalancesheets")
-          .insert(
-            parsedData.map(row => ({
-              client_company_id: companyId,
-              year: row.year || new Date().getFullYear(),
-              quarter: row.quarter || 'Q1',
-              total_assets: row.total_assets,
-              current_assets: row.current_assets,
-              cash_and_cash_equivalents: row.cash_and_cash_equivalents,
-              total_liabilities_net_minority_interest: row.total_liabilities || row.total_liabilities_net_minority_interest,
-              current_liabilities: row.current_liabilities,
-              stockholders_equity: row.stockholders_equity,
-            }))
-          );
+          .insert(dataToInsert);
+        
+        if (error) {
+          console.error("Balance sheet insert error:", error);
+        }
         insertError = error;
         recordsInserted = parsedData.length;
       } else {
+        console.error("Could not determine data type. Headers:", headers);
         throw new Error("Unable to determine data type. Please ensure CSV has proper headers for either income statement or balance sheet data.");
       }
 
