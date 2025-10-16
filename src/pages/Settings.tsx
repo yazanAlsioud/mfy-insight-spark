@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { Settings as SettingsIcon, User, Shield, Bell } from "lucide-react";
+import { Settings as SettingsIcon, User, Shield } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -112,39 +111,6 @@ const Settings = () => {
             <Button className="bg-gradient-primary hover:opacity-90">
               Update Profile
             </Button>
-          </CardContent>
-        </Card>
-
-        {/* Notification Settings */}
-        <Card className="shadow-card">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Bell className="w-5 h-5" />
-              Notifications
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <Label className="text-base">Email Notifications</Label>
-                <p className="text-sm text-muted-foreground">Receive email updates about your financial analysis</p>
-              </div>
-              <Switch defaultChecked />
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <Label className="text-base">Weekly Reports</Label>
-                <p className="text-sm text-muted-foreground">Get weekly financial performance summaries</p>
-              </div>
-              <Switch defaultChecked />
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <Label className="text-base">Benchmark Alerts</Label>
-                <p className="text-sm text-muted-foreground">Notify when your metrics fall below industry average</p>
-              </div>
-              <Switch />
-            </div>
           </CardContent>
         </Card>
 
