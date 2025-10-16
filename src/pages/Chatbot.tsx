@@ -13,7 +13,7 @@ const Chatbot = () => {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-6xl mx-auto space-y-6">
       {/* Header */}
       <div className="text-center space-y-2">
         <div className="flex items-center justify-center gap-2">
@@ -28,7 +28,7 @@ const Chatbot = () => {
       </div>
 
       {/* Chat Interface */}
-      <Card className="shadow-elevated min-h-[500px] flex flex-col">
+      <Card className="shadow-elevated min-h-[700px] flex flex-col">
         <CardHeader className="border-b border-border">
           <CardTitle className="flex items-center gap-2">
             <MessageSquare className="w-5 h-5" />
