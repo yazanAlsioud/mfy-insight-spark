@@ -1,10 +1,7 @@
-import { Upload, FileText, History, CheckCircle, AlertCircle } from "lucide-react";
+import { Upload, History, CheckCircle, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 
 const DataEntry = () => {
   const uploadHistory = [
@@ -48,7 +45,7 @@ const DataEntry = () => {
         </p>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-2">
+      <div className="max-w-3xl">
         {/* File Upload Section */}
         <Card className="shadow-elevated">
           <CardHeader>
@@ -57,7 +54,7 @@ const DataEntry = () => {
               Upload Financial Data
             </CardTitle>
             <p className="text-sm text-muted-foreground">
-              Upload CSV, Excel, or PDF files containing your financial statements.
+              Upload CSV files containing your financial statements.
             </p>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -77,12 +74,9 @@ const DataEntry = () => {
 
             {/* Supported Formats */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Supported Formats:</Label>
+              <p className="text-sm font-medium">Supported Formats:</p>
               <div className="flex flex-wrap gap-2">
                 <Badge variant="secondary">.CSV</Badge>
-                <Badge variant="secondary">.XLSX</Badge>
-                <Badge variant="secondary">.XLS</Badge>
-                <Badge variant="secondary">.PDF</Badge>
               </div>
             </div>
 
@@ -90,52 +84,6 @@ const DataEntry = () => {
             <Button className="w-full bg-gradient-primary hover:opacity-90">
               <Upload className="w-4 h-4 mr-2" />
               Upload Files
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Manual Entry Section */}
-        <Card className="shadow-elevated">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="w-5 h-5" />
-              Manual Data Entry
-            </CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Enter your financial data manually using the form below.
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="revenue">Total Revenue</Label>
-                <Input id="revenue" placeholder="$2,400,000" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="expenses">Operating Expenses</Label>
-                <Input id="expenses" placeholder="$1,200,000" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="netIncome">Net Income</Label>
-                <Input id="netIncome" placeholder="$480,000" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="period">Period</Label>
-                <Input id="period" placeholder="Q3 2024" />
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="notes">Additional Notes</Label>
-              <Textarea 
-                id="notes" 
-                placeholder="Add any relevant notes about this financial period..."
-                className="min-h-[100px]"
-              />
-            </div>
-
-            <Button className="w-full" variant="outline">
-              Save Financial Data
             </Button>
           </CardContent>
         </Card>
