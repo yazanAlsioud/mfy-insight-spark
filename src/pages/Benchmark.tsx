@@ -3,66 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useBenchmarkData } from "@/hooks/useBenchmarkData";
+import { useState } from "react";
 
 const Benchmark = () => {
-  const benchmarkData = [
-    {
-      metric: "Profit Margin",
-      yourValue: "20.5%",
-      industryAvg: "18.2%",
-      status: "above",
-      difference: "+2.3%"
-    },
-    {
-      metric: "Revenue Growth",
-      yourValue: "12.5%",
-      industryAvg: "15.8%",
-      status: "below",
-      difference: "-3.3%"
-    },
-    {
-      metric: "Operating Efficiency",
-      yourValue: "82%",
-      industryAvg: "78%",
-      status: "above",
-      difference: "+4%"
-    },
-    {
-      metric: "Cash Flow Ratio",
-      yourValue: "1.45",
-      industryAvg: "1.52",
-      status: "below",
-      difference: "-0.07"
-    },
-    {
-      metric: "Return on Assets (ROA)",
-      yourValue: "8.5%",
-      industryAvg: "7.2%",
-      status: "above",
-      difference: "+1.3%"
-    },
-    {
-      metric: "Debt-to-Equity Ratio",
-      yourValue: "0.65",
-      industryAvg: "0.55",
-      status: "below",
-      difference: "+0.10"
-    },
-    {
-      metric: "Current Ratio",
-      yourValue: "2.1",
-      industryAvg: "1.8",
-      status: "above",
-      difference: "+0.3"
-    },
-    {
-      metric: "Gross Margin",
-      yourValue: "68%",
-      industryAvg: "65%",
-      status: "above",
-      difference: "+3%"
-    },
-  ];
+  const [selectedIndustry, setSelectedIndustry] = useState("saas");
+  const { benchmarks, loading } = useBenchmarkData(selectedIndustry);
 
   return (
     <div className="space-y-8">
@@ -95,41 +42,73 @@ const Benchmark = () => {
 
       {/* Benchmark Comparison */}
       <div className="grid gap-6 md:grid-cols-2">
-        {benchmarkData.map((item, index) => (
-          <Card key={index} className="shadow-card">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center justify-between">
-                {item.metric}
-                <Badge 
-                  variant={item.status === "above" ? "default" : "secondary"}
-                  className={item.status === "above" ? "bg-success text-success-foreground" : ""}
-                >
-                  {item.status === "above" ? "Above Average" : "Below Average"}
-                </Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Your Performance</p>
-                  <p className="text-2xl font-bold text-foreground">{item.yourValue}</p>
+        {loading ? (
+          <>
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <Card key={i} className="shadow-card">
+                <CardHeader className="pb-3">
+                  <Skeleton className="h-6 w-48" />
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-8 w-20" />
+                    </div>
+                    <div className="space-y-2 text-right">
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-8 w-20" />
+                    </div>
+                  </div>
+                  <Skeleton className="h-px w-full" />
+                  <Skeleton className="h-4 w-24" />
+                </CardContent>
+              </Card>
+            ))}
+          </>
+        ) : benchmarks.length > 0 ? (
+          benchmarks.map((item, index) => (
+            <Card key={index} className="shadow-card">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center justify-between">
+                  {item.metric}
+                  <Badge 
+                    variant={item.status === "above" ? "default" : "secondary"}
+                    className={item.status === "above" ? "bg-success text-success-foreground" : ""}
+                  >
+                    {item.status === "above" ? "Above Average" : "Below Average"}
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Your Performance</p>
+                    <p className="text-2xl font-bold text-foreground">{item.yourValue}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-muted-foreground">Industry Average</p>
+                    <p className="text-2xl font-bold text-muted-foreground">{item.industryAverage}</p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm text-muted-foreground">Industry Average</p>
-                  <p className="text-2xl font-bold text-muted-foreground">{item.industryAvg}</p>
+                <div className="flex items-center justify-between pt-2 border-t border-border">
+                  <span className="text-sm text-muted-foreground">Difference</span>
+                  <span className={`text-sm font-medium ${
+                    item.status === "above" ? "text-success" : "text-warning"
+                  }`}>
+                    {item.difference}
+                  </span>
                 </div>
-              </div>
-              <div className="flex items-center justify-between pt-2 border-t border-border">
-                <span className="text-sm text-muted-foreground">Difference</span>
-                <span className={`text-sm font-medium ${
-                  item.status === "above" ? "text-success" : "text-warning"
-                }`}>
-                  {item.difference}
-                </span>
-              </div>
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <Card className="col-span-full shadow-card">
+            <CardContent className="p-6 text-center text-muted-foreground">
+              No benchmark data available. Please ensure your financial data is uploaded.
             </CardContent>
           </Card>
-        ))}
+        )}
       </div>
 
       {/* Industry Overview */}

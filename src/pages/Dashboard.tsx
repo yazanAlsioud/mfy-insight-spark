@@ -11,13 +11,25 @@ import { Link } from "react-router-dom";
 import { MetricCard } from "@/components/MetricCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useFinancialData } from "@/hooks/useFinancialData";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Dashboard = () => {
+  const { metrics, loading } = useFinancialData();
+
   const upcomingGoals = [
     { goal: "Increase revenue by 15%", progress: 78, target: "Q4 2024" },
     { goal: "Reduce operating costs by 8%", progress: 45, target: "Q1 2025" },
     { goal: "Improve profit margin to 25%", progress: 62, target: "Q4 2024" },
   ];
+
+  const formatCurrency = (value: number) => {
+    if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
+    if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`;
+    return `$${value.toFixed(0)}`;
+  };
+
+  const formatPercentage = (value: number) => `${Math.abs(value).toFixed(1)}%`;
 
   return (
     <div className="space-y-8">
@@ -25,44 +37,68 @@ const Dashboard = () => {
       <div>
         <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
         <p className="text-muted-foreground mt-1">
-          Welcome back! Here's your financial overview for September 2024.
+          Welcome back! Here's your financial overview.
         </p>
       </div>
 
       {/* Key Metrics Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <MetricCard
-          title="Total Revenue"
-          value="$2.4M"
-          change="12.5%"
-          changeType="positive"
-          icon={DollarSign}
-          description="vs last month"
-        />
-        <MetricCard
-          title="Net Income"
-          value="$480K"
-          change="8.2%"
-          changeType="positive"
-          icon={TrendingUp}
-          description="vs last month"
-        />
-        <MetricCard
-          title="Operating Expenses"
-          value="$1.2M"
-          change="3.1%"
-          changeType="negative"
-          icon={TrendingDown}
-          description="vs last month"
-        />
-        <MetricCard
-          title="Profit Margin"
-          value="20.5%"
-          change="2.3%"
-          changeType="positive"
-          icon={PieChart}
-          description="vs last month"
-        />
+        {loading ? (
+          <>
+            {[1, 2, 3, 4].map((i) => (
+              <Card key={i} className="shadow-card">
+                <CardHeader className="pb-2">
+                  <Skeleton className="h-4 w-24" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-8 w-32 mb-2" />
+                  <Skeleton className="h-3 w-20" />
+                </CardContent>
+              </Card>
+            ))}
+          </>
+        ) : metrics ? (
+          <>
+            <MetricCard
+              title="Total Revenue"
+              value={formatCurrency(metrics.totalRevenue)}
+              change={formatPercentage(metrics.revenueChange)}
+              changeType={metrics.revenueChange >= 0 ? "positive" : "negative"}
+              icon={DollarSign}
+              description="vs last period"
+            />
+            <MetricCard
+              title="Net Income"
+              value={formatCurrency(metrics.netIncome)}
+              change={formatPercentage(metrics.netIncomeChange)}
+              changeType={metrics.netIncomeChange >= 0 ? "positive" : "negative"}
+              icon={TrendingUp}
+              description="vs last period"
+            />
+            <MetricCard
+              title="Operating Expenses"
+              value={formatCurrency(metrics.operatingExpenses)}
+              change={formatPercentage(metrics.expenseChange)}
+              changeType={metrics.expenseChange >= 0 ? "negative" : "positive"}
+              icon={TrendingDown}
+              description="vs last period"
+            />
+            <MetricCard
+              title="Profit Margin"
+              value={`${metrics.profitMargin.toFixed(1)}%`}
+              change={formatPercentage(metrics.marginChange)}
+              changeType={metrics.marginChange >= 0 ? "positive" : "negative"}
+              icon={PieChart}
+              description="vs last period"
+            />
+          </>
+        ) : (
+          <Card className="col-span-full shadow-card">
+            <CardContent className="p-6 text-center text-muted-foreground">
+              No financial data available. Please upload your financial statements.
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* Performance vs Goals */}
