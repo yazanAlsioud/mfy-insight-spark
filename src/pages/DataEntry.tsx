@@ -359,6 +359,18 @@ const DataEntry = () => {
               <p className="text-xs text-muted-foreground mt-2">
                 CSV should include headers like: year, quarter, total_revenue, net_income, total_assets, etc.
               </p>
+              <div className="flex gap-2 mt-3">
+                <a href="/templates/income_statement_template.csv" download>
+                  <Button variant="outline" size="sm">
+                    Download Income Statement Template
+                  </Button>
+                </a>
+                <a href="/templates/balance_sheet_template.csv" download>
+                  <Button variant="outline" size="sm">
+                    Download Balance Sheet Template
+                  </Button>
+                </a>
+              </div>
             </div>
 
             {/* Upload Button */}
