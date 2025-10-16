@@ -849,6 +849,33 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          client_id: number | null
+          created_at: string | null
+          email: string
+          full_name: string
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          client_id?: number | null
+          created_at?: string | null
+          email: string
+          full_name: string
+          id: string
+          updated_at?: string | null
+        }
+        Update: {
+          client_id?: number | null
+          created_at?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       saudimarketcompanies: {
         Row: {
           company_id: number

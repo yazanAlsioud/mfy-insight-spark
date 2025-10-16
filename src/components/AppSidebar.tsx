@@ -7,7 +7,6 @@ import {
   Upload,
   LayoutDashboard,
   Settings,
-  LogOut,
 } from "lucide-react";
 
 import {
@@ -22,7 +21,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
+import LogoutButton from "./LogoutButton";
 
 const mainItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
@@ -123,13 +122,7 @@ export function AppSidebar() {
             })}
             
             <SidebarMenuItem>
-              <Button 
-                variant="ghost" 
-                className={`w-full h-11 text-foreground hover:bg-accent hover:text-foreground ${collapsed ? "justify-center px-2" : "justify-start px-3"}`}
-              >
-                <LogOut className={`w-5 h-5 flex-shrink-0 ${collapsed ? "" : "mr-3"}`} />
-                {!collapsed && <span className="font-medium">Logout</span>}
-              </Button>
+              <LogoutButton />
             </SidebarMenuItem>
           </SidebarMenu>
         </div>
