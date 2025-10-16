@@ -155,8 +155,7 @@ const Dashboard = () => {
                   <div className="flex justify-between text-xs text-muted-foreground">
                     <span>
                       Current: {kpi.current_value.toFixed(1)}
-                      {kpi.metric_name.includes('ratio') ? '' : '%'} 
-                      ({progress.toFixed(0)}% of target)
+                      {kpi.metric_name.includes('ratio') ? '' : '%'}
                     </span>
                     <span>
                       Target: {kpi.target_value}
