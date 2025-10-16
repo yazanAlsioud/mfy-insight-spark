@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Settings as SettingsIcon, User, Shield } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,86 @@ const Settings = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [updating, setUpdating] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
   const { toast } = useToast();
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) return;
+
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("full_name, email")
+        .eq("id", user.id)
+        .single();
+
+      if (error) throw error;
+
+      if (profile) {
+        setFullName(profile.full_name || "");
+        setEmail(profile.email || "");
+      }
+    } catch (error: any) {
+      console.error("Error fetching profile:", error);
+      toast({
+        title: "Error loading profile",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleProfileUpdate = async () => {
+    if (!fullName.trim()) {
+      toast({
+        title: "Name required",
+        description: "Please enter your full name",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setUpdating(true);
+
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) throw new Error("No user found");
+
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          full_name: fullName.trim(),
+        })
+        .eq("id", user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Profile updated",
+        description: "Your profile has been successfully updated",
+      });
+    } catch (error: any) {
+      console.error("Error updating profile:", error);
+      toast({
+        title: "Failed to update profile",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setUpdating(false);
+    }
+  };
 
   const handlePasswordChange = async () => {
     if (!newPassword || !confirmPassword) {
@@ -90,26 +169,34 @@ const Settings = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
-                <Input id="firstName" defaultValue="John" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input id="lastName" defaultValue="Doe" />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="fullName">Full Name</Label>
+              <Input 
+                id="fullName" 
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                disabled={loading}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email Address</Label>
-              <Input id="email" type="email" defaultValue="john.doe@company.com" />
+              <Input 
+                id="email" 
+                type="email" 
+                value={email}
+                disabled
+                className="bg-muted"
+              />
+              <p className="text-xs text-muted-foreground">
+                Email cannot be changed
+              </p>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="company">Company</Label>
-              <Input id="company" defaultValue="Tech Solutions Inc." />
-            </div>
-            <Button className="bg-gradient-primary hover:opacity-90">
-              Update Profile
+            <Button 
+              className="bg-gradient-primary hover:opacity-90"
+              onClick={handleProfileUpdate}
+              disabled={updating || loading}
+            >
+              {updating ? "Updating..." : "Update Profile"}
             </Button>
           </CardContent>
         </Card>
