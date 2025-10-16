@@ -1,4 +1,4 @@
-import { TrendingUp, BarChart3, Target, Building2 } from "lucide-react";
+import { TrendingUp, BarChart3, Building2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -34,23 +34,33 @@ const Benchmark = () => {
       status: "below",
       difference: "-0.07"
     },
-  ];
-
-  const insights = [
     {
-      title: "Strong Profit Margins",
-      description: "Your profit margin is 2.3% above industry average, indicating excellent cost management.",
-      type: "positive"
+      metric: "Return on Assets (ROA)",
+      yourValue: "8.5%",
+      industryAvg: "7.2%",
+      status: "above",
+      difference: "+1.3%"
     },
     {
-      title: "Revenue Growth Opportunity",
-      description: "Consider expanding marketing efforts to match industry growth rate of 15.8%.",
-      type: "improvement"
+      metric: "Debt-to-Equity Ratio",
+      yourValue: "0.65",
+      industryAvg: "0.55",
+      status: "below",
+      difference: "+0.10"
     },
     {
-      title: "Operational Excellence",
-      description: "Your operating efficiency exceeds industry standards by 4%.",
-      type: "positive"
+      metric: "Current Ratio",
+      yourValue: "2.1",
+      industryAvg: "1.8",
+      status: "above",
+      difference: "+0.3"
+    },
+    {
+      metric: "Gross Margin",
+      yourValue: "68%",
+      industryAvg: "65%",
+      status: "above",
+      difference: "+3%"
     },
   ];
 
@@ -121,32 +131,6 @@ const Benchmark = () => {
           </Card>
         ))}
       </div>
-
-      {/* Insights & Recommendations */}
-      <Card className="shadow-elevated">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Target className="w-5 h-5" />
-            AI-Generated Insights
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Based on your benchmark analysis, here are key insights and recommendations.
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {insights.map((insight, index) => (
-            <div key={index} className="flex items-start space-x-4 p-4 bg-muted/50 rounded-lg">
-              <div className={`w-3 h-3 rounded-full mt-1 ${
-                insight.type === "positive" ? "bg-success" : "bg-warning"
-              }`}></div>
-              <div className="flex-1">
-                <h4 className="font-medium text-foreground">{insight.title}</h4>
-                <p className="text-sm text-muted-foreground mt-1">{insight.description}</p>
-              </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
 
       {/* Industry Overview */}
       <Card className="shadow-card">
