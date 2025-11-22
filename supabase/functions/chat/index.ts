@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.75.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,59 +13,122 @@ serve(async (req) => {
 
   try {
     const { messages } = await req.json();
-    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
     
-    if (!OPENAI_API_KEY) {
-      throw new Error("OPENAI_API_KEY is not configured");
+    // Get authorization header
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "No authorization header" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
-    console.log("Calling OpenAI with messages:", messages);
+    // Create Supabase client
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    // Get authenticated user
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      console.error("User error:", userError);
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    console.log("User authenticated:", user.id);
+
+    // Get user's profile to find client_id
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("client_id")
+      .eq("id", user.id)
+      .single();
+
+    if (profileError || !profile?.client_id) {
+      console.error("Profile error:", profileError);
+      return new Response(
+        JSON.stringify({ error: "User profile not found" }),
+        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    console.log("Client ID:", profile.client_id);
+
+    // Get client_company_id
+    const { data: company, error: companyError } = await supabase
+      .from("clientcompanies")
+      .select("client_company_id")
+      .eq("client_id", profile.client_id)
+      .single();
+
+    if (companyError || !company?.client_company_id) {
+      console.error("Company error:", companyError);
+      return new Response(
+        JSON.stringify({ error: "Company not found. Please set up your company first." }),
+        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    console.log("Client Company ID:", company.client_company_id);
+
+    // Get the user's prompt (last message)
+    const userPrompt = messages[messages.length - 1]?.content || "";
+    console.log("User prompt:", userPrompt);
+
+    // Call external API
+    const apiUrl = "https://agentic-analyst-api-frc7dkeagaakchg2.westeurope-01.azurewebsites.net/ask";
+    console.log("Calling external API:", apiUrl);
+    
+    const apiResponse = await fetch(apiUrl, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${OPENAI_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "system",
-            content: "You are a helpful AI financial assistant. You help users analyze their financial data, understand KPIs, and provide actionable insights. Keep your responses clear, concise, and professional."
-          },
-          ...messages,
-        ],
-        max_tokens: 1000,
-        stream: true,
+        prompt: userPrompt,
+        client_company_id: company.client_company_id,
       }),
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("OpenAI API error:", response.status, errorText);
-      
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Rate limit exceeded. Please try again later." }),
-          {
-            status: 429,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          }
-        );
-      }
-      
-      throw new Error(`OpenAI API error: ${response.status}`);
+    if (!apiResponse.ok) {
+      const errorText = await apiResponse.text();
+      console.error("API error:", apiResponse.status, errorText);
+      throw new Error(`API error: ${apiResponse.status}`);
     }
 
-    return new Response(response.body, {
-      headers: {
-        ...corsHeaders,
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        "Connection": "keep-alive",
-      },
-    });
+    const apiData = await apiResponse.json();
+    console.log("API response received");
+
+    // Extract final_answer and strategy.actions
+    const finalAnswer = apiData.final_answer || "No answer available";
+    const actions = apiData.strategy?.actions || [];
+
+    // Format response
+    let responseText = `${finalAnswer}\n\n`;
+    
+    if (actions.length > 0) {
+      responseText += "**Recommended Actions:**\n";
+      actions.forEach((action: string, index: number) => {
+        responseText += `${index + 1}. ${action}\n`;
+      });
+    }
+
+    console.log("Sending formatted response");
+
+    return new Response(
+      JSON.stringify({ 
+        message: responseText,
+        raw_data: apiData 
+      }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     console.error("Chat error:", error);
     return new Response(
