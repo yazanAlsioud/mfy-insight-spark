@@ -381,7 +381,7 @@ const KPIs = () => {
                     <div>
                       <p className="text-xs text-muted-foreground">Current Value</p>
                       <p className="text-lg font-bold text-foreground">
-                        {kpi.current_value.toFixed(2)}
+                        {(kpi.current_value ?? 0).toFixed(2)}
                         {kpi.metric_name.includes('ratio') ? '' : '%'}
                       </p>
                     </div>
@@ -404,12 +404,12 @@ const KPIs = () => {
                       <div 
                         className="bg-gradient-primary h-2 rounded-full transition-all duration-300"
                         style={{ 
-                          width: `${Math.min(100, Math.max(0, (kpi.current_value / kpi.target_value) * 100))}%` 
+                          width: `${Math.min(100, Math.max(0, ((kpi.current_value ?? 0) / kpi.target_value) * 100))}%` 
                         }}
                       ></div>
                     </div>
                     <p className="text-xs text-muted-foreground text-center mt-1">
-                      {((kpi.current_value / kpi.target_value) * 100).toFixed(1)}% of target achieved
+                      {(((kpi.current_value ?? 0) / kpi.target_value) * 100).toFixed(1)}% of target achieved
                     </p>
                   </div>
                 </CardContent>
