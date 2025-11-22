@@ -19,13 +19,6 @@ const Chatbot = () => {
   const { toast } = useToast();
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const suggestedQuestions = [
-    "What are my main cost drivers this quarter?",
-    "How does my profit margin compare to industry average?",
-    "Show me revenue trends for the past 6 months",
-    "What recommendations do you have for cost optimization?",
-  ];
-
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -137,40 +130,6 @@ const Chatbot = () => {
                       What would you like to know?
                     </p>
                   </div>
-                </div>
-
-                {/* Suggested Questions */}
-                <div className="space-y-3 py-4">
-                  <p className="text-sm font-medium text-muted-foreground">Suggested questions:</p>
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    {suggestedQuestions.map((question, index) => (
-                      <Button
-                        key={index}
-                        variant="outline"
-                        className="h-auto p-3 text-left justify-start text-wrap"
-                        onClick={() => sendMessage(question)}
-                        disabled={isLoading}
-                      >
-                        <span className="text-sm">{question}</span>
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Features */}
-                <div className="flex flex-wrap gap-2 pt-4">
-                  <Badge variant="secondary" className="flex items-center gap-1">
-                    <MessageSquare className="w-3 h-3" />
-                    Natural Language
-                  </Badge>
-                  <Badge variant="secondary" className="flex items-center gap-1">
-                    <Sparkles className="w-3 h-3" />
-                    AI-Powered Insights
-                  </Badge>
-                  <Badge variant="secondary" className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-chart-revenue rounded-full" />
-                    Data Visualization
-                  </Badge>
                 </div>
               </>
             )}
