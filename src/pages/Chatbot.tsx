@@ -43,67 +43,42 @@ const Chatbot = () => {
     try {
       const CHAT_URL = `https://rsupebkviivwxpgsehve.supabase.co/functions/v1/chat`;
       
+      // Get the auth token from Supabase
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        throw new Error("Not authenticated");
+      }
+
       const response = await fetch(CHAT_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({ messages: [...messages, userMessage] }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to get response");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to get response");
       }
 
-      if (!response.body) {
-        throw new Error("No response body");
-      }
+      const data = await response.json();
+      
+      // Add assistant's response
+      const assistantMessage: Message = { 
+        role: "assistant", 
+        content: data.message 
+      };
+      setMessages((prev) => [...prev, assistantMessage]);
 
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let assistantMessage = "";
-      let isFirstChunk = true;
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split("\n");
-
-        for (const line of lines) {
-          if (line.startsWith("data: ")) {
-            const data = line.slice(6);
-            if (data === "[DONE]") continue;
-
-            try {
-              const parsed = JSON.parse(data);
-              const content = parsed.choices?.[0]?.delta?.content;
-              
-              if (content) {
-                assistantMessage += content;
-                
-                setMessages((prev) => {
-                  if (isFirstChunk) {
-                    isFirstChunk = false;
-                    return [...prev, { role: "assistant", content: assistantMessage }];
-                  }
-                  const newMessages = [...prev];
-                  newMessages[newMessages.length - 1].content = assistantMessage;
-                  return newMessages;
-                });
-              }
-            } catch (e) {
-              // Ignore parsing errors for incomplete JSON
-            }
-          }
-        }
-      }
     } catch (error) {
       console.error("Error:", error);
       toast({
         title: "Error",
-        description: "Failed to send message. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to send message. Please try again.",
         variant: "destructive",
       });
     } finally {
